@@ -1,0 +1,43 @@
+@startuml
+title xyjackpot
+namespace logic {
+    class AiDrawMgr << (S,Aquamarine) >> {
+        - dao dao.Dao
+        - awardPool <font color=blue>map</font>[int32]<font color=blue>map</font>[int32][]*xy_jackpot.AwardInfo
+
+        - start(ctx context.Context) error
+        - lock(ctx context.Context) bool
+        - unlock(ctx context.Context) 
+        - forEach(ctx context.Context) error
+        - forEachRoom(ctx context.Context, arenaID int32, roomMap <font color=blue>map</font>[int32][]*xy_jackpot.AwardInfo) 
+        - forEachAward(ctx context.Context, arenaID int32, roomID int32, awardPool []*xy_jackpot.AwardInfo, arenaConf *config.Arena) 
+        - isDraw(awardType xy_jackpot.AwardType, money int64, arenaConf *config.Arena) bool
+        - draw(ctx context.Context, arenaID int32, roomID int32, drawAward *xy_jackpot.AwardInfo, awardPool []*xy_jackpot.AwardInfo) error
+        - randomRobot(ctx context.Context) (*model.Robot, error)
+        - isCeil(awardType xy_jackpot.AwardType, money int64, arenaConf *config.Arena) bool
+
+        + Polling() 
+        + ActiveCheck(ctx context.Context, arenaID int32, roomID int32) 
+
+    }
+    class Draw << (S,Aquamarine) >> {
+        - dao dao.Dao
+        - req *xy_jackpot.DrawAwardReq
+        - smallAward *xy_jackpot.AwardInfo
+        - drawConf *config.Draw
+        - firstBet int64
+        - isRobot bool
+
+        - preDraw() error
+        - draw() ([]*xy_jackpot.AwardInfo, error)
+        - afterDraw(ctx context.Context, drawAward []*xy_jackpot.AwardInfo) ([]*xy_jackpot.AwardInfo, error)
+        - remove(ctx context.Context, drawAward []*xy_jackpot.AwardInfo) ([]*xy_jackpot.AwardInfo, error)
+        - aggregationReward(drawAward []*xy_jackpot.AwardInfo) ([]*xy_jackpot.AwardRecord, []string)
+
+        + Draw(ctx context.Context) (*xy_jackpot.DrawAwardResp, error)
+
+    }
+}
+
+
+@enduml
